@@ -1,9 +1,15 @@
 // const http = require('http');
 const express = require('express');
 const app = express();
+const port = 9080;
+
+/* routing and parameters */
 const bodyParser = require('body-parser')
 const apiRouters = require('./router');
-const port = 9080;
+
+/* user session */
+const session = require('express-session');
+const randomstring = require('randomstring');
 
 console.log(`Process ENV ${process.env}`);
 
@@ -24,8 +30,17 @@ try {
     // create application/x-www-form-urlencoded parser
     // parse application/json
     app.use(bodyParser.json())
-    app.use(bodyParser.urlencoded({ extended: true }))
+    app.use(bodyParser.urlencoded({ extended: true }));
 
+    /* session */
+    app.use(
+        session({
+            secret : randomstring.generate(),
+            cookie: { maxAge: 60000 },
+            resave: false,
+            saveUninitialized: false
+        })
+    );
     /* *** Run the Server *** */
     // server.listen(port);
     // console.log(`listen ${port}`);
