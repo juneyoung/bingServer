@@ -2,18 +2,10 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
-const routers = require('./router');
+const apiRouters = require('./router');
 const port = 9080;
 
 console.log(`Process ENV ${process.env}`);
-
-app.use(bodyParser.json({ type: 'application/*+json' }))
-app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
-app.use(bodyParser.text({ type: 'text/html' }))
-// create application/x-www-form-urlencoded parser
-app.use(bodyParser.urlencoded({ extended: false }))
-// parse application/json
-app.use(bodyParser.json())
 
 // === Before express ===
 // let server = http.createServer((req, res) => {
@@ -24,9 +16,20 @@ app.use(bodyParser.json())
 // });
 
 try {
+
+    /* *** Set body parser for the API Server *** */
+    // app.use(bodyParser.json({ type: 'application/*+json' }))
+    app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
+    app.use(bodyParser.text({ type: 'text/html' }))
+    // create application/x-www-form-urlencoded parser
+    // parse application/json
+    app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ extended: true }))
+
+    /* *** Run the Server *** */
     // server.listen(port);
     // console.log(`listen ${port}`);
-    app.use('/', routers);
+    app.use('/api', apiRouters);
     app.listen(port, () => {
         console.log(`listen ${port}`);    
     })
