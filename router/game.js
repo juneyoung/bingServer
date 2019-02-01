@@ -17,8 +17,8 @@ router.get('/getBoard', (req, res) => {
   });
 });
 
-router.post('/putNumber', (req, res) => {
-  console.log('putNumber Api called');
+router.post('/commit', (req, res) => {
+  console.log('commit Api called');
   res.json({
     result : 'SUCCESS',
     number : req.body.num
@@ -27,6 +27,7 @@ router.post('/putNumber', (req, res) => {
 
 router.post('/generate', (req, res) => {
   console.log('generate request body', req.body);
+  console.log('generate request session', req.session);
   res.json({
     result : 'SUCESS',
     game : new Game()

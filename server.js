@@ -1,4 +1,3 @@
-// const http = require('http');
 const express = require('express');
 const app = express();
 const port = 9080;
@@ -12,14 +11,6 @@ const session = require('express-session');
 const randomstring = require('randomstring');
 
 console.log(`Process ENV ${process.env}`);
-
-// === Before express ===
-// let server = http.createServer((req, res) => {
-//     res.writeHead(200, {
-//         'Content-Type' : 'text/html'
-//     });
-//     res.end('Server On');
-// });
 
 try {
 
@@ -42,8 +33,6 @@ try {
         })
     );
     /* *** Run the Server *** */
-    // server.listen(port);
-    // console.log(`listen ${port}`);
     app.use('/api', apiRouters);
     app.listen(port, () => {
         console.log(`listen ${port}`);    

@@ -1,7 +1,7 @@
 module.exports = class Player {
-    constructor (id, username, profileImage) {
-        this.id = id || '';
-        this.username = username || '';
-        this.profileImage = profileImage || '';
+    constructor (sessionId, username, profileImage) {
+        this.sessionId = sessionId || '';       // 현재 사용자의 세션 아이디 
+        this.username = username || '';         // github 사용자 아이디
+        this.profileImage = profileImage || ''; // githubProfileImage
     }
 }

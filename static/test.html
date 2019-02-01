@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <meta></meata>
+        <title>TEST PAGE</title>
+    </head>
+    <body>
+        <div>
+            <button onclick="sendGitLogin()">
+                click to login
+            </button>
+        </div>
+    </nav>
+</html>
+<script>
+    function sendGitLogin () {
+        console.log('fetch execute');
+        let promise = fetch('/api/member/login', {
+            method : 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin" : "*",
+                'Access-Control-Allow-Credentials' : true,
+            },
+            mode: 'no-cors',
+        }).then(res => console.log('res', res));
+    }
+</script>
