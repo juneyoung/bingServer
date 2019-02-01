@@ -1,3 +1,4 @@
+const Game = require('../model/Game.js');
 const router = require('express').Router();
 
 // middleware that is specific to this router
@@ -22,6 +23,14 @@ router.post('/putNumber', (req, res) => {
     result : 'SUCCESS',
     number : req.body.num
   });
+});
+
+router.post('/generate', (req, res) => {
+  console.log('generate request body', req.body);
+  res.json({
+    result : 'SUCESS',
+    game : new Game()
+  })
 });
 
 module.exports = router;
