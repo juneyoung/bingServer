@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Socket.io Chat Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <p>
+        Learned from https://poiemaweb.com/nodejs-socketio
+    </p>  
+    <h3>Socket.io Chat Example</h3>
+    <form class="form-horizontal">
+        <!-- Login -->
+        <div class="form-group">
+            <label for="userId" class="col-sm-4 control-label">User ID</label>
+            <div class="col-sm-4">
+                <input type="text" disabled class="form-control" id="userId" placeholder="Github user">
+            </div>
+            <button type='button' onclick='login()' class="btn btn-default">Github Login</button>
+        </div>
+
+        <!-- Create Game -->
+        <div class='form-group'>
+            <label for="primeGameId" class="col-sm-4 control-label">Game ID</label>
+            <div class="col-sm-4">
+                <input type="text" disabled class="form-control" id="primeGameId" placeholder="Generated gameId">
+            </div>
+            <button type='button' onclick='create()' class="btn btn-default">Create Game</button>
+        </div>
+
+        <!-- Join game -->
+        <div class="form-group">
+            <label for="gameId" class="col-sm-4 control-label">Game ID</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="gameId" placeholder="Type game ID to join">
+            </div>
+            <button onclick='join()' class="btn btn-default">Join Game</button>
+        </div>
+
+        <!-- Commit number -->
+        <div class="form-group">
+            <label for="commitNumber" class="col-sm-4 control-label">Number to commit</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="commitNumber" placeholder="Inser Binggo Numbers">
+            </div>
+            <button onclick='commit()' class="btn btn-default">Commit Number</button>
+        </div>
+
+        <!-- Leave game -->
+        <div class="form-group">
+            <label for='leaveBtn' class="col-sm-4 control-label">Number to commit</label>
+            <div class="col-sm-4">
+                <button id='leaveBtn' onclick='leave()' class="btn btn-default">Leave Game</button>
+            </div>
+        </div>
+    </form>
+
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      let socketInstance = null;  
+
+      async function commonAjax (method, api, data) {
+        let sendingData = {
+            method : method.toUpperCase(),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin" : "*",
+                'Access-Control-Allow-Credentials' : true,
+            },
+            mode: 'no-cors',
+        }
+        if(data) sendingData = Object.assign({}, sendingData, { body : data});
+        let res = await fetch(api, sendingData).then(res => res.json());
+        console.log('commonAjax', res);
+        if(res.result.toUpperCase() !== 'SUCCESS') throw 'Can not create a game';
+        return res;
+      }
+
+      function login () {
+        console.log('Login triggered ... ');
+      }
+
+      async function create () {
+        try {
+            console.log('Create game triggered ... ');
+            let res = await commonAjax('post', '/api/game/create');
+            console.log('create result would be ',  res);
+            listen(res);
+        } catch(exception) {
+            console.error('Error occurs while create a game', exception);
+        }
+      }
+
+      function listen (res) {
+        const gameId = res.game.gameId;
+        socketInstance = io(`http://localhost:9080/game/${gameId}`);
+        socketInstance.on('message', (data) => {
+            console.log('client Event message triggered', data);
+        });
+        document.querySelector('#primeGameId').value = gameId;
+        console.log('client socket listening ... ', socketInstance);
+      }
+
+      async function join () {
+        try {
+            const joinGameId = document.querySelector('#gameId');
+            console.log('Join triggered ... ',);
+            let res = await commonAjax('post', '/api/game/join', { gameId : joinGameId});
+        } catch (exception) {
+            console.error('Error occurs while join a game', exception);
+        }
+      }
+
+      function commit (number) {
+        console.log('Commit triggered ... ', number);
+      }
+
+      function leave () {
+        console.log('Leave triggered ... ');
+      }
+  </script>
+</body>
+</html>

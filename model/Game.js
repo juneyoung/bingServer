@@ -1,12 +1,9 @@
-// import Player from './Player';
-// import PlayerQueue from './PlayerQueue';
-// import RandomString from 'randomstring';
 const Player = require('./Player');
 const PlayerQueue = require('./PlayerQueue');
 const Binggo = require('./Binggo');
 const RandomString = require('randomstring');
 
-// export default 안됨 
+// export default 안됨. import 구문 사용 불가  
 module.exports = class Game {
     constructor () {
         this.gameId = RandomString.generate();

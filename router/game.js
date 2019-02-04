@@ -1,5 +1,6 @@
 const Game = require('../model/Game.js');
 const router = require('express').Router();
+let GlobalVars = require('../state/GlobalVars');
 
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
@@ -7,8 +8,6 @@ router.use(function timeLog(req, res, next) {
   next();
 });
 
-// define the home page route
-// https://fullstack-developer.academy/res-json-vs-res-send-vs-res-end-in-express/
 router.get('/getBoard', (req, res) => {
   console.log('getBoard Api called');
   res.json({
@@ -25,12 +24,32 @@ router.post('/commit', (req, res) => {
   });
 });
 
-router.post('/generate', (req, res) => {
-  console.log('generate request body', req.body);
-  console.log('generate request session', req.session);
+router.post('/create', (req, res) => {
+  console.log('create request body', req.body);
+  console.log('create request session', req.session);
+  console.log('GenerateGameSokect');
+  let game = new Game();
+  let gameId = game.gameId;
+
+  // Define game socket action
+  let currentGameSocket = GlobalVars.socketIO.of(`/game/${gameId}`).on('connection', (socket) => {
+    socket.on('join', (data) => {
+      console.log('join to socket', data);
+      // socket.game = gameId; // ??? Like room of chatting ?
+      socket.join(gameId);
+      currentGameSocket.to(gameId).emit('message', 'New people joined');
+    });
+    socket.on('message', (data) => {
+      console.log('socket message event called', data);
+    });
+  });
+
+  GlobalVars.GameList[game.gameId] = currentGameSocket;
+  // Check status of global variables ...
+  // console.log('After create game, Gloval state like ... ', GlobalVars);
   res.json({
-    result : 'SUCESS',
-    game : new Game()
+    result : 'SUCCESS',
+    game : game
   })
 });
 

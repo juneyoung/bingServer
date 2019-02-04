@@ -1,5 +1,7 @@
-const express = require('express');
-const app = express();
+const app = require('express')();       // express app
+const http = require('http');
+let socketIO = require('socket.io');    // socket io for message ... could replace with http2/sse(server-sent-events)
+let GlobalVars = require('./state/GlobalVars');
 const port = 9080;
 
 /* routing and parameters */
@@ -34,8 +36,41 @@ try {
     );
     /* *** Run the Server *** */
     app.use('/api', apiRouters);
-    app.listen(port, () => {
-        console.log(`listen ${port}`);    
+    /* *** Index page redirection *** */
+    app.get('/', (req, res) => {
+        // res.sendFile(`${__dirname}/static/test.html`)
+        res.sendFile(`${__dirname}/test/simpleClient.html`)
+    });
+
+    const httpServer = http.createServer(app);
+    let socketIOInstance = socketIO(httpServer);
+    GlobalVars.socketIO = socketIOInstance;
+
+
+    /* *** Define socket event *** */
+    socketIOInstance.of('/chat').on('connection', (socket) => {
+        // 사용자가 숫자를 커밋한다.
+        socket.on('commit', (data) => {
+
+            console.log('Server recieved data ', data);
+            // socketIOInstance.emit()
+
+            // 접속된 모든 사용자에게 데이터를 전달한다 
+            // socketIOInstance.emit('commit', data);
+
+            // 에코 - 자신에게만 되돌려주는 메세지 
+            // socket.emit('commit', data);
+
+            // 발신자를 제외한 모든 사용자에게 데이터를 전달한다 
+            // socket.broadcast.emit('commit', data);
+
+            // 특정 클라이언트에게만 메시지를 전송한다
+            // socketIOInstance.to(id).emit('commit', data);
+        });
+    });
+
+    httpServer.listen(port, () => {
+        console.log(`Server Listening on the port ${port}`);
     })
 } catch (e) {
     console.error('Failed to boot the server', e);
