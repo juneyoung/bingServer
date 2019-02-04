@@ -59,4 +59,4 @@ HOST=http://localhost:9080
 - [ Express & Socket.io join - Korean ](https://poiemaweb.com/nodejs-socketio)
 - [ WebSocket & HTTP2 SSE - Korean ](https://engineering.huiseoul.com/자바스크립트는-어떻게-작동하는가-웹소켓-및-http-2-sse-1ccde9f9dc51)
 - [ Github login API & node.js - English ](http://shiya.io/how-to-do-3-legged-oauth-with-github-a-general-guide-by-example-with-node-js/)
-- [ About github contribution graph ](https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/)
+- [ About github contribution graph - English, Official ](https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/)
