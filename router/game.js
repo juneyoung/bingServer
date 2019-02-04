@@ -8,19 +8,36 @@ router.use(function timeLog(req, res, next) {
   next();
 });
 
-router.get('/getBoard', (req, res) => {
-  console.log('getBoard Api called');
-  res.json({
-    result : 'SUCCESS',
-    number : [[1,2,3],[4,5,6],[7,8,9]]
-  });
-});
+// router.get('/getBoard', (req, res) => {
+//   console.log('getBoard Api called');
+//   res.json({
+//     result : 'SUCCESS',
+//     number : [[1,2,3],[4,5,6],[7,8,9]]
+//   });
+// });
 
 router.post('/commit', (req, res) => {
-  console.log('commit Api called');
+  console.log('commit Api called', req.body);
+  let result = 'SUCCESS', message = '';
+  let roomId = req.body.gameId;
+  let number = req.body.number;
+  try {
+    if(!GlobalVars.rooms[roomId]) 
+      throw `Could not commit the number ${number} since gameId ${roomId} is invalid`;
+
+    GlobalVars.socketIO.emit('commit', {
+      room : roomId,
+      number : number
+    });  
+  } catch(exception) {
+    console.error('Exception occurs while commit a number', exception);
+    result = 'FAIL';
+    message = JSON.stringify(exception);
+  }
   res.json({
-    result : 'SUCCESS',
-    number : req.body.num
+    result : result,
+    number : req.body.num,
+    message : message
   });
 });
 
@@ -54,7 +71,7 @@ router.post('/join', (req, res) => {
   } catch (exception) {
     console.error(exception);
     result = 'FAIL';
-    message = exception;
+    message = JSON.stringify(exception);
   }
   res.json({
     result : result,

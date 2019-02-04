@@ -10,7 +10,7 @@
     <p>
         Learned from https://poiemaweb.com/nodejs-socketio
     </p>  
-    <h3>Socket.io Chat Example</h3>
+    <h3>Socket.io Binggo Example</h3>
     <form class="form-horizontal">
         <!-- Login -->
         <div class="form-group">
@@ -43,7 +43,7 @@
         <div class="form-group">
             <label for="commitNumber" class="col-sm-4 control-label">Number to commit</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="commitNumber" placeholder="Inser Binggo Numbers">
+                <input type="text" class="form-control" id="commitNumber" placeholder="Insert a Binggo Numbers">
             </div>
             <button type='button' onclick='commit()' class="btn btn-default">Commit Number</button>
         </div>
@@ -124,6 +124,10 @@
         try {
             const joinGameId = document.querySelector('#gameId').value || '';
             console.log('Join triggered ... ', joinGameId);
+            if(!joinGameId) {
+                alert('A game ID required');
+                return false;
+            }
             let res = await commonAjax('post', '/api/game/join', { gameId : joinGameId});
         } catch (exception) {
             alert(exception);
@@ -131,8 +135,34 @@
         }
       }
 
-      function commit (number) {
+      async function commit () {
+        const number = document.querySelector('#commitNumber').value || 0; 
+        let joinGameId = document.querySelector('#primeGameId').value || ''; 
         console.log('Commit triggered ... ', number);
+        try {
+            let regex = /^\d+$/;
+            if(!joinGameId) {
+                joinGameId = document.querySelector('#gameId').value || '';  
+                if(!joinGameId) {
+                    alert(`A game ID is required to participate`);
+                    return false;
+                }
+            }
+
+            if(!number || !regex.test(number)) {
+                alert(`Invalid input ${number}. Only numbers are allowed`);
+                return false;
+            }
+
+            let res = 
+                await commonAjax('post', '/api/game/commit', { 
+                    gameId : joinGameId,
+                    number : number 
+                });
+        } catch(exception) {
+            console.error('Exception', exception);
+            alert(`Failed to commit a number ${number}`);
+        }
       }
 
       function leave () {

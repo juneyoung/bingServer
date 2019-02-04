@@ -66,6 +66,12 @@ try {
             socket.join(data.room);
             socketIOInstance.emit('message', `New player joined to the room - ${data.room} `);
         });
+
+        socket.on('commit', (data) => {
+            console.log('SOCKET.IO join called', data);
+            socket.join(data.room);
+            socketIOInstance.emit('message', `A player committed a number - ${data.number} `);
+        });
     });
 
     GlobalVars.socketIO = socketIOInstance; // Add to global, so the controllers can manage own actions like create, join ...
