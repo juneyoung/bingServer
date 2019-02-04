@@ -21,7 +21,7 @@ $> yarn start
 
 Implementations are in process.
 
-| API | method | parameters | returns | detail | status |
+| API | method | parameters | returns | description | status |
 |-----| -----|-----|-----|-----|-----|
 | member/join | POST | none | JSON object | Connects with the github account | On working |
 | game/create | POST | none | JSON object | Generates A game and returns Game ID | On working |
