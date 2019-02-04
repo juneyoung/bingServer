@@ -11,6 +11,7 @@ let GlobalVars = {
                 socket : [socket io Object]
             }
         */
-    }
+    },
+    rooms : {}
 }
 module.exports = GlobalVars;

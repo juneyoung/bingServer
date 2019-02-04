@@ -5,7 +5,7 @@ let GlobalVars = require('./state/GlobalVars');
 const port = 9080;
 
 /* routing and parameters */
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const apiRouters = require('./router');
 
 /* user session */
@@ -18,12 +18,20 @@ try {
 
     /* *** Set body parser for the API Server *** */
     // app.use(bodyParser.json({ type: 'application/*+json' }))
+    // app.use(bodyParser.json({ type: 'application/json' }))
     app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
     app.use(bodyParser.text({ type: 'text/html' }))
     // create application/x-www-form-urlencoded parser
     // parse application/json
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: true }));
+
+    let sessionMiddleware = session({
+        secret : randomstring.generate(),
+        cookie: { maxAge: 60000 },
+        resave: false,
+        saveUninitialized: false
+    });
 
     /* session */
     app.use(
@@ -44,31 +52,23 @@ try {
 
     const httpServer = http.createServer(app);
     let socketIOInstance = socketIO(httpServer);
-    GlobalVars.socketIO = socketIOInstance;
 
-
-    /* *** Define socket event *** */
-    socketIOInstance.of('/chat').on('connection', (socket) => {
-        // 사용자가 숫자를 커밋한다.
-        socket.on('commit', (data) => {
-
-            console.log('Server recieved data ', data);
-            // socketIOInstance.emit()
-
-            // 접속된 모든 사용자에게 데이터를 전달한다 
-            // socketIOInstance.emit('commit', data);
-
-            // 에코 - 자신에게만 되돌려주는 메세지 
-            // socket.emit('commit', data);
-
-            // 발신자를 제외한 모든 사용자에게 데이터를 전달한다 
-            // socket.broadcast.emit('commit', data);
-
-            // 특정 클라이언트에게만 메시지를 전송한다
-            // socketIOInstance.to(id).emit('commit', data);
+    socketIOInstance.on('connection', (socket) => {
+        GlobalVars.eventBus = socket;
+        console.log('SOCKET.IO A USER CONNECTED');
+        socket.on('create', (data) => {
+            console.log('SOCKET.IO create called');
+            socket.join(data.room);
+            socketIOInstance.emit('message', `A room - ${data.room} - created`);
+        });
+        socket.on('join', (data) => {
+            console.log('SOCKET.IO join called', data);
+            socket.join(data.room);
+            socketIOInstance.emit('message', `New player joined to the room - ${data.room} `);
         });
     });
 
+    GlobalVars.socketIO = socketIOInstance; // Add to global, so the controllers can manage own actions like create, join ...
     httpServer.listen(port, () => {
         console.log(`Server Listening on the port ${port}`);
     })

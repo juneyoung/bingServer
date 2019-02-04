@@ -26,31 +26,40 @@ router.post('/commit', (req, res) => {
 
 router.post('/create', (req, res) => {
   console.log('create request body', req.body);
-  console.log('create request session', req.session);
-  console.log('GenerateGameSokect');
+  // console.log('create request session', req.session);
   let game = new Game();
   let gameId = game.gameId;
-
-  // Define game socket action
-  let currentGameSocket = GlobalVars.socketIO.of(`/game/${gameId}`).on('connection', (socket) => {
-    socket.on('join', (data) => {
-      console.log('join to socket', data);
-      // socket.game = gameId; // ??? Like room of chatting ?
-      socket.join(gameId);
-      currentGameSocket.to(gameId).emit('message', 'New people joined');
-    });
-    socket.on('message', (data) => {
-      console.log('socket message event called', data);
-    });
+  GlobalVars.socketIO.emit('create', {
+    room : gameId
   });
-
-  GlobalVars.GameList[game.gameId] = currentGameSocket;
-  // Check status of global variables ...
-  // console.log('After create game, Gloval state like ... ', GlobalVars);
+  GlobalVars.rooms = Object.assign({}, GlobalVars.rooms, {[gameId] : {}});
   res.json({
     result : 'SUCCESS',
     game : game
   })
 });
+
+router.post('/join', (req, res) => {
+  console.log('join API called', req.body);
+  let toJoin = req.body.gameId;
+  let result = 'SUCCESS', message = '';
+  try {
+    console.log('Rooms which registered in global', GlobalVars.rooms);
+    let room = GlobalVars.rooms[toJoin];
+    if(!room) throw `Invalid gameId : ${toJoin}`;
+    GlobalVars.socketIO.emit('join', {
+      room : toJoin
+    });
+    message = `Successfully joined the game ${toJoin}`
+  } catch (exception) {
+    console.error(exception);
+    result = 'FAIL';
+    message = exception;
+  }
+  res.json({
+    result : result,
+    message : message
+  })
+})
 
 module.exports = router;

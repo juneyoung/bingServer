@@ -36,7 +36,7 @@
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="gameId" placeholder="Type game ID to join">
             </div>
-            <button onclick='join()' class="btn btn-default">Join Game</button>
+            <button type='button' onclick='join()' class="btn btn-default">Join Game</button>
         </div>
 
         <!-- Commit number -->
@@ -45,14 +45,14 @@
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="commitNumber" placeholder="Inser Binggo Numbers">
             </div>
-            <button onclick='commit()' class="btn btn-default">Commit Number</button>
+            <button type='button' onclick='commit()' class="btn btn-default">Commit Number</button>
         </div>
 
         <!-- Leave game -->
         <div class="form-group">
             <label for='leaveBtn' class="col-sm-4 control-label">Number to commit</label>
             <div class="col-sm-4">
-                <button id='leaveBtn' onclick='leave()' class="btn btn-default">Leave Game</button>
+                <button type='button' id='leaveBtn' onclick='leave()' class="btn btn-default">Leave Game</button>
             </div>
         </div>
     </form>
@@ -72,17 +72,40 @@
                 "Access-Control-Allow-Origin" : "*",
                 'Access-Control-Allow-Credentials' : true,
             },
-            mode: 'no-cors',
+            // mode: 'no-cors', // 해당 프로퍼티가 설정될 경우, 파라미터가 제대로 전달되지 않음 
         }
-        if(data) sendingData = Object.assign({}, sendingData, { body : data});
+
+        // if(data) sendingData = Object.assign({}, sendingData, { body : data});
+        if(data) sendingData = Object.assign({}, sendingData, { body : JSON.stringify(data) });
+
+        console.log('request information will (sendingData)', sendingData);
+
         let res = await fetch(api, sendingData).then(res => res.json());
         console.log('commonAjax', res);
-        if(res.result.toUpperCase() !== 'SUCCESS') throw 'Can not create a game';
+        if(res.result.toUpperCase() !== 'SUCCESS') throw res.message || 'API exception occured';
         return res;
       }
 
-      function login () {
-        console.log('Login triggered ... ');
+        function listen (res) {
+            const gameId = res.game.gameId;
+            socketInstance = io(`http://localhost:9080`);
+            socketInstance.on('message', (data) => {
+                console.log('client Event message triggered', data);
+            });
+            document.querySelector('#primeGameId').value = gameId;
+            socketInstance.emit('create',{ room : gameId });
+            console.log('client socket listening ... ', socketInstance);
+        }
+
+      async function login () {
+        try {
+            console.log('Login triggered ... ');
+            let res = await commonAjax('post', '/api/member/login');
+            console.log('login result would be ',  res);
+        } catch(exception) {
+            alert(exception);
+            console.error('Error occurs while login', exception);
+        }
       }
 
       async function create () {
@@ -92,26 +115,18 @@
             console.log('create result would be ',  res);
             listen(res);
         } catch(exception) {
+            alert(exception);
             console.error('Error occurs while create a game', exception);
         }
       }
 
-      function listen (res) {
-        const gameId = res.game.gameId;
-        socketInstance = io(`http://localhost:9080/game/${gameId}`);
-        socketInstance.on('message', (data) => {
-            console.log('client Event message triggered', data);
-        });
-        document.querySelector('#primeGameId').value = gameId;
-        console.log('client socket listening ... ', socketInstance);
-      }
-
       async function join () {
         try {
-            const joinGameId = document.querySelector('#gameId');
-            console.log('Join triggered ... ',);
+            const joinGameId = document.querySelector('#gameId').value || '';
+            console.log('Join triggered ... ', joinGameId);
             let res = await commonAjax('post', '/api/game/join', { gameId : joinGameId});
         } catch (exception) {
+            alert(exception);
             console.error('Error occurs while join a game', exception);
         }
       }
