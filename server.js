@@ -70,11 +70,13 @@ try {
         socket.on('commit', (data) => {
             console.log('SOCKET.IO join called', data);
             socket.join(data.room);
-            socketIOInstance.emit('message', `A player committed a number - ${data.number} `);
+            socketIOInstance.emit('message', `A player committed a number - ${data.number} to room ${data.room}`);
         });
     });
 
     GlobalVars.socketIO = socketIOInstance; // Add to global, so the controllers can manage own actions like create, join ...
+    // GlobalVars.socketIO = socketIO;
+    
     httpServer.listen(port, () => {
         console.log(`Server Listening on the port ${port}`);
     })

@@ -8,15 +8,8 @@ router.use(function timeLog(req, res, next) {
   next();
 });
 
-// router.get('/getBoard', (req, res) => {
-//   console.log('getBoard Api called');
-//   res.json({
-//     result : 'SUCCESS',
-//     number : [[1,2,3],[4,5,6],[7,8,9]]
-//   });
-// });
-
 router.post('/commit', (req, res) => {
+  // Room validation / Number validation
   console.log('commit Api called', req.body);
   let result = 'SUCCESS', message = '';
   let roomId = req.body.gameId;
@@ -24,11 +17,6 @@ router.post('/commit', (req, res) => {
   try {
     if(!GlobalVars.rooms[roomId]) 
       throw `Could not commit the number ${number} since gameId ${roomId} is invalid`;
-
-    GlobalVars.socketIO.emit('commit', {
-      room : roomId,
-      number : number
-    });  
   } catch(exception) {
     console.error('Exception occurs while commit a number', exception);
     result = 'FAIL';
@@ -46,9 +34,6 @@ router.post('/create', (req, res) => {
   // console.log('create request session', req.session);
   let game = new Game();
   let gameId = game.gameId;
-  GlobalVars.socketIO.emit('create', {
-    room : gameId
-  });
   GlobalVars.rooms = Object.assign({}, GlobalVars.rooms, {[gameId] : {}});
   res.json({
     result : 'SUCCESS',
@@ -57,6 +42,7 @@ router.post('/create', (req, res) => {
 });
 
 router.post('/join', (req, res) => {
+  // Room validation
   console.log('join API called', req.body);
   let toJoin = req.body.gameId;
   let result = 'SUCCESS', message = '';
@@ -64,9 +50,6 @@ router.post('/join', (req, res) => {
     console.log('Rooms which registered in global', GlobalVars.rooms);
     let room = GlobalVars.rooms[toJoin];
     if(!room) throw `Invalid gameId : ${toJoin}`;
-    GlobalVars.socketIO.emit('join', {
-      room : toJoin
-    });
     message = `Successfully joined the game ${toJoin}`
   } catch (exception) {
     console.error(exception);

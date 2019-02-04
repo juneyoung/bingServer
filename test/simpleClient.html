@@ -87,13 +87,10 @@
       }
 
         function listen (res) {
-            const gameId = res.game.gameId;
             socketInstance = io(`http://localhost:9080`);
             socketInstance.on('message', (data) => {
                 console.log('client Event message triggered', data);
             });
-            document.querySelector('#primeGameId').value = gameId;
-            socketInstance.emit('create',{ room : gameId });
             console.log('client socket listening ... ', socketInstance);
         }
 
@@ -114,6 +111,9 @@
             let res = await commonAjax('post', '/api/game/create');
             console.log('create result would be ',  res);
             listen(res);
+            const gameId = res.game.gameId;
+            document.querySelector('#primeGameId').value = gameId;
+            socketInstance.emit('create',{ room : gameId });
         } catch(exception) {
             alert(exception);
             console.error('Error occurs while create a game', exception);
@@ -129,6 +129,7 @@
                 return false;
             }
             let res = await commonAjax('post', '/api/game/join', { gameId : joinGameId});
+            socketInstance.emit('join',{ room : joinGameId });
         } catch (exception) {
             alert(exception);
             console.error('Error occurs while join a game', exception);
@@ -159,6 +160,7 @@
                     gameId : joinGameId,
                     number : number 
                 });
+            socketInstance.emit('commit',{ room : joinGameId , number : number });    
         } catch(exception) {
             console.error('Exception', exception);
             alert(`Failed to commit a number ${number}`);
