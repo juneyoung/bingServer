@@ -6,6 +6,17 @@ Do process with:
 - yarn
 - github auth api
 
+### 01. How to execute
+
+##### A. Command
+```
+# In your console.
+$> yarn install
+$> yarn start
+```
+##### B. Test entry point
+`https://localhost:9080` is the entry point which points `./test/simpleClient.html`.
+
 ### 10. Api list
 
 Implementations are in process.
