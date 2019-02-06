@@ -2,9 +2,9 @@ const app = require('express')();       // express app
 const http = require('http');
 let socketIO = require('socket.io');    // socket io for message ... could replace with http2/sse(server-sent-events)
 let GlobalVars = require('./state/GlobalVars');
-// const port = 9080;
-const port = 80;    // heroku needs 80
-    
+const port = 9080;
+// const port = 80;    // heroku needs 80
+
 /* routing and parameters */
 const bodyParser = require('body-parser');
 const apiRouters = require('./router');
@@ -14,6 +14,7 @@ const session = require('express-session');
 const randomstring = require('randomstring');
 
 console.log(`Process ENV ${process.env}`);
+// console.log(`Process ENV ${JSON.stringify(process.env)}`);
 
 try {
 
