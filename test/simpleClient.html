@@ -93,8 +93,8 @@
 
             function listen() {
                 console.log(`${new Date()} - Add Socket listener`);
-                // socketInstance = io(`http://localhost:9080`); //heroku needs 80
-                socketInstance = io(`http://localhost:80`);
+                socketInstance = io(`http://localhost:9080`); //heroku needs 80
+                // socketInstance = io(`http://localhost:80`);
                 socketInstance.on('message', (data) => {
                     console.log('client Event message triggered', data);
                     appendFeeds(data);
