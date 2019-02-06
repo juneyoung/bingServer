@@ -2,7 +2,8 @@ const app = require('express')();       // express app
 const http = require('http');
 let socketIO = require('socket.io');    // socket io for message ... could replace with http2/sse(server-sent-events)
 let GlobalVars = require('./state/GlobalVars');
-const port = 9080;
+let defaults = require('./static/heroku.json');
+const port = process.env.PORT || defaults.port;
 // const port = 80;    // heroku needs 80
 
 /* routing and parameters */
