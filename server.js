@@ -61,6 +61,7 @@ try {
             socket.join(data.room);
             socketIOInstance.emit('message', `A room - ${data.room} - created`);
         });
+
         socket.on('join', (data) => {
             console.log('SOCKET.IO join called', data);
             socket.join(data.room);
@@ -71,6 +72,21 @@ try {
             console.log('SOCKET.IO join called', data);
             socket.join(data.room);
             socketIOInstance.emit('message', `A player committed a number - ${data.number} to room ${data.room}`);
+        });
+
+        socket.on('leave', (data) => {
+            let gameId = data.gameId;
+            let message = `New player left the game - ${gameId}`;
+            let playerQueue = GlobalVars.games[gameId].queue || [];
+            if(playerQueue.length < 1) {
+                delete GlobalVars[gameId];
+                message = `${message}. No player in game ${gameId}. destroyed`;
+            } ;
+            socketIOInstance.emit('message', message);
+        });
+
+        socket.on('disconnect', (data) => {
+            //
         });
     });
 

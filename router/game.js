@@ -12,11 +12,13 @@ router.post('/commit', (req, res) => {
   // Room validation / Number validation
   console.log('commit Api called', req.body);
   let result = 'SUCCESS', message = '';
-  let roomId = req.body.gameId;
+  let gameId = req.body.gameId;
   let number = req.body.number;
+  let game = null;
   try {
-    if(!GlobalVars.rooms[roomId]) 
-      throw `Could not commit the number ${number} since gameId ${roomId} is invalid`;
+    game = GlobalVars.games[gameId];
+    if(!game) throw `Could not commit the number ${number} since gameId ${gameId} is invalid`;
+    game.commit(number);
   } catch(exception) {
     console.error('Exception occurs while commit a number', exception);
     result = 'FAIL';
@@ -24,17 +26,17 @@ router.post('/commit', (req, res) => {
   }
   res.json({
     result : result,
-    number : req.body.num,
-    message : message
+    message : message,
+    game : game || {}
   });
 });
 
 router.post('/create', (req, res) => {
   console.log('create request body', req.body);
   // console.log('create request session', req.session);
-  let game = new Game();
+  let game = new Game(req.body.rows, req.body.max, req.body.winRows);
   let gameId = game.gameId;
-  GlobalVars.rooms = Object.assign({}, GlobalVars.rooms, {[gameId] : {}});
+  GlobalVars.games = Object.assign({}, GlobalVars.games, {[gameId] : game});
   res.json({
     result : 'SUCCESS',
     game : game
@@ -46,10 +48,11 @@ router.post('/join', (req, res) => {
   console.log('join API called', req.body);
   let toJoin = req.body.gameId;
   let result = 'SUCCESS', message = '';
+  let game = null;
   try {
-    console.log('Rooms which registered in global', GlobalVars.rooms);
-    let room = GlobalVars.rooms[toJoin];
-    if(!room) throw `Invalid gameId : ${toJoin}`;
+    console.log('Rooms which registered in global', GlobalVars.games);
+    game = GlobalVars.games[toJoin];
+    if(!game) throw `Invalid gameId : ${toJoin}`;
     message = `Successfully joined the game ${toJoin}`
   } catch (exception) {
     console.error(exception);
@@ -58,7 +61,8 @@ router.post('/join', (req, res) => {
   }
   res.json({
     result : result,
-    message : message
+    message : message,
+    game : game || {}
   })
 })
 
