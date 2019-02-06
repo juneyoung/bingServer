@@ -19,15 +19,19 @@ $> yarn start
 
 ### 10. Api list
 
-Implementations are in process.
+Implementations are in process. 
+
+Conventions
+- `valueName[valueType=defaultValue]`
+- `*` means required value
 
 | API | method | parameters | returns | description | status |
 |-----| -----|-----|-----|-----|-----|
 | member/join | POST | none | JSON object | Connects with the github account | On working |
-| game/create | POST | none | JSON object | Generates A game and returns Game ID | On working |
-| game/join | POST | gameId | JSON object | none | On working |
-| game/commit | POST | gameId, number | JSON object | Applies a number | On working | 
-| game/leave | GET | gameId | JSON object | Removes the user from the game | On working | 
+| game/create | POST | rows[number=3], max[number=12], winRows[number=3] | JSON object | Generates A game and returns Game ID | On working |
+| game/join | POST | *gameId[string] | JSON object | none | On working |
+| game/commit | POST | *gameId[string], *number[number] | JSON object | Applies a number | On working | 
+| game/leave | GET | *gameId[string] | JSON object | Removes the user from the game | On working | 
 
 
 ### 95. Cautions
