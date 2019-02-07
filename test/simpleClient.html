@@ -4,7 +4,13 @@
             <meta charset="utf-8">
             <title>Socket.io Chat Example</title>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-            </head>
+            <style>
+                .reactions {
+                    align-items: center;
+                    margin: 30px;
+                }
+            </style>
+        </head>
         <body>
         <div class="container">
             <!-- <p>
@@ -95,8 +101,10 @@
         </div>
 
         <!-- Add Messages from the socket -->
-        <div id='socket-resp'>
+        <div class='reactions'>
+            <div id='socket-resp'>
 
+            </div>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -158,11 +166,19 @@
             async function create () {
                 try {
                     if(!!socketInstance) throw 'A socket connection is already exists';
-                    console.log('Create game triggered ... ');
+                    let rows = (document.querySelector('#rows').value || 3)*1;
+                    let max = (document.querySelector('#max').value || 12)*1;
+                    let winRows = (document.querySelector('#winRows').value || 3)*1;
+
+                    if(max < Math.pow(rows, 2)) throw `max(${max}) must lager than rows square(${Math.pow(rows, 2)})`;
+
+                    let maxWinRows = rows*2 + 2;
+                    if(winRows > maxWinRows) throw `maximum winRows for ${rows} rows is ${maxWinRows}`;
+
                     let res = await commonAjax('post', '/api/game/create', {
-                        rows : document.querySelector('#rows').value,
-                        max : document.querySelector('#max').value,
-                        winRows : document.querySelector('#winRows').value
+                        rows : rows,
+                        max : max,
+                        winRows : winRows
                     });
                     console.log('create result would be ',  res);
                     const gameId = res.game.gameId;
