@@ -1,4 +1,5 @@
-const app = require('express')();       // express app
+const express = require('express');
+const app = express();       // express app
 const http = require('http');
 let socketIO = require('socket.io');    // socket io for message ... could replace with http2/sse(server-sent-events)
 let GlobalVars = require('./state/GlobalVars');
@@ -35,6 +36,9 @@ try {
         resave: false,
         saveUninitialized: false
     });
+
+    /* static resource path */
+    app.use(express.static('static'));
 
     /* session */
     app.use(
