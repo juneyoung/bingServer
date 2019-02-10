@@ -82,23 +82,6 @@ router.use(function timeLog(req, res, next) {
     next();
 });
 
-// router.all('/googleAuth', (req, res) => {
-//     console.log('Google Authentificatuin called');
-//     let result = 'SUCCESS', message = '', authUri = '';
-//     try {
-//         authUri = url + '&state=' + req.session.cert
-//     } catch(exception) {
-//         console.error('Google Auth Exception ', exception);
-//         result = 'FAIL';
-//         message = exception.toString();
-//     }
-//     res.json({
-//         result : result,
-//         message : message,
-//         authUri : authUri
-//     });
-// })
-
 router.all('/googleLogin', (req, res) => {
     console.log('auth router googleLogin', url);
     req.session.cert = rs.generate();
