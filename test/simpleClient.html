@@ -110,8 +110,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-            let socketInstance = null;  
-
+            let socketInstance = null;
             function listen() {
                 console.log(`${new Date()} - Add Socket listener`);
                 socketInstance = io(`${location.protocol}//${location.hostname}:${location.port}`); //heroku needs 80
@@ -246,11 +245,30 @@
                 }
             }
 
+            async function readSession () {
+                let res = null;
+                try {
+                    res = await commonAjax('post', '/api/session/me');
+                } catch (exception) {
+                    console.error('Failed to read Session ', exception);
+                }
+                return res;
+            }
+
             function leave () {
                 console.log('Leave triggered ... ');
                 // annoying
                 socketInstance = null;
             }
+
+            window.addEventListener('load', async () => {
+                const sessionInfo = await readSession();
+                if(sessionInfo.signed) {
+                    document.getElementById('userId').value = sessionInfo.user.displayName;
+                }
+
+                console.log('sessionInfo', sessionInfo)
+            }, false); 
         </script>
         </body>
     </html>

@@ -113,7 +113,7 @@ router.all('/googleLogin', (req, res) => {
 router.all('/googleCallback', async (req, res) => {
     console.log('SNS AUTH router google callback ', req.query.code, );
     const displayName = await googleLogin(req);
-    res.redirect(`${process.env.HOST}?name=${req.session.user.displayName}`);
+    res.redirect(`${process.env.HOST}`);
 });
 
 module.exports = router;
