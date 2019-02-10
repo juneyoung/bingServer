@@ -66,3 +66,5 @@ HOST=http://localhost:9080
 - [ WebSocket & HTTP2 SSE - Korean ](https://engineering.huiseoul.com/자바스크립트는-어떻게-작동하는가-웹소켓-및-http-2-sse-1ccde9f9dc51)
 - [ Github login API & node.js - English ](http://shiya.io/how-to-do-3-legged-oauth-with-github-a-general-guide-by-example-with-node-js/)
 - [ About github contribution graph - English, Official ](https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/)
+- [ Google login with googleapi - Korean ](https://pangyeon.tistory.com/40)
+- [ Google login without passport - English ](https://medium.com/@jackrobertscott/how-to-use-google-auth-api-with-node-js-888304f7e3a0)
