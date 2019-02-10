@@ -1,12 +1,11 @@
-const Player = require('./Player');
-const PlayerQueue = require('./PlayerQueue');
 const RandomString = require('randomstring');
 
 // export default 안됨. import 구문 사용 불가  
 module.exports = class Game {
     constructor (rows, max, winRows) {
         this.gameId = RandomString.generate();
-        this.queue = new PlayerQueue();
+        // this.queue = new PlayerQueue();
+        this.queue = [];
         this.turn = 0;
         this.created = new Date();
         this.committed = [];    // 입력된 숫자의 배열
@@ -18,13 +17,29 @@ module.exports = class Game {
     }
 
     join (player) {
-        if(queue.indexOf(player) > -1) throw `${player} is already in the game`;
-        this.queue.join(player);
+        console.log('Join user', player);
+        let filteredUser = {
+            name : player.displayName,
+            profile : player.image.url
+        }
+        if(this.queue.indexOf(filteredUser) > -1) throw `${filteredUser} is already in the game`;
+        this.queue = this.queue.concat(filteredUser);
+        console.log('successfully joined', filteredUser.name);
     }
 
-    leave (Player) {
-        if(queue.indexOf(player) > -1) throw `${player} is already left the game`;
-        this.queue.leave(Player);
+    leave (player) {
+        console.log('Left user', player);
+        let filteredUser = {
+            name : player.displayName,
+            profile : player.image.url
+        }
+        const leftIdx = this.queue.indexOf(filteredUser);
+        if(leftIdx > -1) throw `${filteredUser} is already left the game`;
+        
+        let copied = [].concat(this.queue);
+        copied.splice(leftIdx, 1); // 끊어냄 
+        this.queue = copied;
+        console.log('Players who left the game is ', this.queue);
     }
 
     commit (number) {

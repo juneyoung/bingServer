@@ -1,16 +1,32 @@
-const Game = require('../model/Game.js');
+const Game = require('../model/Game');
+const Player = require('../model/Player');
 const router = require('express').Router();
 let GlobalVars = require('../state/GlobalVars');
 
 // middleware that is specific to this router
-router.use(function timeLog(req, res, next) {
-  console.log('Game router = Time: ', Date.now());
-  next();
+// router.use(function timeLog(req, res, next) {
+//   console.log('Game router = Time: ', Date.now());
+//   next();
+// });
+
+
+// Check signed in or not
+router.use((req, res, next) => {
+  try {
+    if(!req.session.signed) throw 'Sign in required';
+    next();
+  } catch (e) {
+    res.json({
+      result : 'FAIL',
+      message : e.toString()
+    });
+  }
 });
 
 router.post('/commit', (req, res) => {
   // Room validation / Number validation
-  console.log('commit Api called', req.body);
+  console.log('commit Api called body', req.body);
+  console.log('commit Api called session', req.session);
   let result = 'SUCCESS', message = '';
   let gameId = req.body.gameId;
   let number = req.body.number;
@@ -32,13 +48,26 @@ router.post('/commit', (req, res) => {
 });
 
 router.post('/create', (req, res) => {
-  console.log('create request body', req.body);
-  // console.log('create request session', req.session);
-  let game = new Game(req.body.rows, req.body.max, req.body.winRows);
-  let gameId = game.gameId;
-  GlobalVars.games = Object.assign({}, GlobalVars.games, {[gameId] : game});
+  let result = 'SUCCESS', message = '', game = null;
+
+  try {
+    game = new Game(req.body.rows, req.body.max, req.body.winRows);
+    let gameId = game.gameId;
+    GlobalVars.games = Object.assign({}, GlobalVars.games, {[gameId] : game});
+    // sessionId, name, profile
+    let user = req.session.user;
+    // let player = new Player(req.session.id, user.displayName, user.image.url);
+    console.log('Game before join', game);
+    game.join(user);
+    console.log('Game after join', game);
+  } catch (e) {
+    result = 'FAIL';
+    message = e.toString();
+  }
+  
   res.json({
-    result : 'SUCCESS',
+    result : result,
+    message : message,
     game : game
   })
 });

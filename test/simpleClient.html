@@ -135,13 +135,16 @@
                     "Access-Control-Allow-Origin" : "*",
                     'Access-Control-Allow-Credentials' : true,
                 };
+
                 if(addHeader) headers = Object.assign({}, headers, addHeader);
+                method = method.toUpperCase();
                 let sendingData = {
-                    method : method.toUpperCase(),
+                    method : method,
                 }
                 // if(data) sendingData = Object.assign({}, sendingData, { body : data});
                 if(data) sendingData = Object.assign({}, sendingData, { body : JSON.stringify(data) });
-                if(method === 'POST') sendingData = Obejct.assign({}, sendingData, {
+
+                if(method === 'POST') sendingData = Object.assign({}, sendingData, {
                     headers: headers
                 });
                 console.log('request information will (sendingData)', sendingData);
@@ -232,6 +235,7 @@
                         return false;
                     }
 
+                    console.log('before number commit ', joinGameId, number);
                     let res = 
                         await commonAjax('post', '/api/game/commit', { 
                             gameId : joinGameId,

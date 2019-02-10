@@ -13,7 +13,7 @@ try {
     app.use(express.static('static'));
     require('./modules/bodyParser')(app);
     require('./modules/cookieParser')(app);
-    require('./modules/cors')(app);
+    // require('./modules/cors')(app);
     require('./modules/session')(app);
 
     /* *** Run the Server *** */
