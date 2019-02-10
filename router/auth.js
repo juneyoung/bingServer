@@ -14,9 +14,11 @@ const googleConfig = {
     redirect: `${process.env.HOST}/api/auth/googleCallback`
 };
 
+// scopes :: https://developers.google.com/identity/protocols/googlescopes
 const informationScope = [
     'https://www.googleapis.com/auth/plus.me',
-    'https://www.googleapis.com/auth/userinfo.email'
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email',
 ];
 
 const oauth2Client = new google.auth.OAuth2(
@@ -69,10 +71,10 @@ async function googleLogin(req) {
 */
 
 function issueUser (req, data) {
+    console.log(`Data will stored in session :: ${JSON.stringify(data)}`)
     req.session.signed = true;
     req.session.user = data;
 }
-
 
 // 기록자 ...
 router.use(function timeLog(req, res, next) {
@@ -80,9 +82,22 @@ router.use(function timeLog(req, res, next) {
     next();
 });
 
-router.all('/google', (req, res) => {
-});
-
+// router.all('/googleAuth', (req, res) => {
+//     console.log('Google Authentificatuin called');
+//     let result = 'SUCCESS', message = '', authUri = '';
+//     try {
+//         authUri = url + '&state=' + req.session.cert
+//     } catch(exception) {
+//         console.error('Google Auth Exception ', exception);
+//         result = 'FAIL';
+//         message = exception.toString();
+//     }
+//     res.json({
+//         result : result,
+//         message : message,
+//         authUri : authUri
+//     });
+// })
 
 router.all('/googleLogin', (req, res) => {
     console.log('auth router googleLogin', url);
