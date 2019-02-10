@@ -25,9 +25,9 @@
                 <div class="form-group">
                     <label for="userId" class="col-sm-4 control-label">User ID</label>
                     <div class="col-sm-4">
-                        <input type="text" disabled class="form-control" id="userId" placeholder="Github user">
+                        <input type="text" disabled class="form-control" id="userId" placeholder="Goolge user">
                     </div>
-                    <button type='button' onclick='login()' class="btn btn-default">Github Login</button>
+                    <button type='button' onclick='login()' class="btn btn-default">Google Login</button>
                 </div>
 
                 <!-- Create Game -->
@@ -135,15 +135,16 @@
                     'Content-Type': 'application/json',
                     "Access-Control-Allow-Origin" : "*",
                     'Access-Control-Allow-Credentials' : true,
-                    // mode: 'no-cors', // 해당 프로퍼티가 설정될 경우, 파라미터가 제대로 전달되지 않음 
                 };
                 if(addHeader) headers = Object.assign({}, headers, addHeader);
                 let sendingData = {
                     method : method.toUpperCase(),
-                    headers: headers,
                 }
                 // if(data) sendingData = Object.assign({}, sendingData, { body : data});
                 if(data) sendingData = Object.assign({}, sendingData, { body : JSON.stringify(data) });
+                if(method === 'POST') sendingData = Obejct.assign({}, sendingData, {
+                    headers: headers
+                });
                 console.log('request information will (sendingData)', sendingData);
 
                 let res = await fetch(api, sendingData).then(res => res.json());
@@ -155,8 +156,9 @@
             async function login () {
                 try {
                     console.log('Login triggered ... ');
-                    let res = await commonAjax('post', '/api/member/login', null, { mode: 'no-cors' });
-                    console.log('login result would be ',  res);
+                    // API 호출로 서버에서 처리하려고 시도할 때 CORS 이슈에 걸림. 
+                    location.href= '/api/auth/googleLogin';
+                    // commonAjax('get', '/api/auth/googleLogin');
                 } catch(exception) {
                     alert(exception);
                     console.error('Error occurs while login', exception);

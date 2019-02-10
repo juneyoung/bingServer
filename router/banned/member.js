@@ -27,7 +27,6 @@ router.post('/login', (req, res) => {
     });
     const githubAuthUrl = githubApiLogInPrefix + paramsStr;
     console.log(githubAuthUrl);
-    // 화면에서 처리하면 이상한가...
     res.redirect(githubAuthUrl);
 });
 
