@@ -1,13 +1,13 @@
 // Google Login
 const router = require('express').Router();
 const rs = require('randomstring');
-// const gapis = require('googleapis');
 const { google } = require('googleapis'); 
 /*
     Google API 고정 정보 
 */
 
 require('dotenv').config();
+// Compare .env key strictly
 const googleConfig = {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_SECRET_ID,
@@ -48,8 +48,6 @@ function getGooglePlusApi(auth) {
 async function googleLogin(req) {
     const {code, state} = req.query;
     const { tokens } = await oauth2Client.getToken(code);
-
-    console.log(`compare security token query ${state}, session ${req.session.cert}`);
     if(state !== req.session.cert) throw 'Security Token deos not fit';
 
     oauth2Client.setCredentials(tokens);
@@ -94,7 +92,7 @@ router.all('/googleLogin', (req, res) => {
 });
 
 router.all('/googleCallback', async (req, res) => {
-    console.log('SNS AUTH router google callback ', req.query.code, );
+    console.log('SNS AUTH router google callback ', req.query.code, process.env.HOST);
     const displayName = await googleLogin(req);
     res.redirect(`${process.env.HOST}`);
 });

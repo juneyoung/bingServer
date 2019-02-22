@@ -3,13 +3,6 @@ const Player = require('../model/Player');
 const router = require('express').Router();
 let GlobalVars = require('../state/GlobalVars');
 
-// middleware that is specific to this router
-// router.use(function timeLog(req, res, next) {
-//   console.log('Game router = Time: ', Date.now());
-//   next();
-// });
-
-
 // Check signed in or not
 router.use((req, res, next) => {
   try {
@@ -47,6 +40,7 @@ router.post('/commit', (req, res) => {
   });
 });
 
+// 생성시 현재 세션 유저를 가지는 사용자 배열을 생성해서 game 과 연동해줘야 함 
 router.post('/create', (req, res) => {
   let result = 'SUCCESS', message = '', game = null;
 
@@ -56,10 +50,12 @@ router.post('/create', (req, res) => {
     GlobalVars.games = Object.assign({}, GlobalVars.games, {[gameId] : game});
     // sessionId, name, profile
     let user = req.session.user;
-    // let player = new Player(req.session.id, user.displayName, user.image.url);
-    console.log('Game before join', game);
-    game.join(user);
-    console.log('Game after join', game);
+    console.log(`CREATE GAME ====> ${JSON.stringify(user)}`);
+    let player = new Player(req.session.id, user.displayName, user.image.url);
+    console.log('Game before join', game, player);
+    // game.join(user);
+    game.join(player);
+    console.log('Game after join', game, player);
   } catch (e) {
     result = 'FAIL';
     message = e.toString();

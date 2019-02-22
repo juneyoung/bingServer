@@ -11,6 +11,7 @@ module.exports = class Game {
         this.committed = [];    // 입력된 숫자의 배열
         this.minNum = 1;
 
+        this.status = 'none'; // [ 'none' , 'pause', 'playing' ]
         this.rows = (!rows) ? 3: rows;
         this.maxNum = (!max) ? 12 : max;
         this.winRows = (!winRows) ? 3 : winRows;
@@ -18,24 +19,19 @@ module.exports = class Game {
 
     join (player) {
         console.log('Join user', player);
-        let filteredUser = {
-            name : player.displayName,
-            profile : player.image.url
-        }
-        if(this.queue.indexOf(filteredUser) > -1) throw `${filteredUser} is already in the game`;
-        this.queue = this.queue.concat(filteredUser);
-        console.log('successfully joined', filteredUser.name);
+        if(this.queue.indexOf(player) > -1) throw `${player} is already in the game`;
+        this.queue = this.queue.concat(player);
+        console.log('successfully joined', player.name);
     }
 
     leave (player) {
         console.log('Left user', player);
-        let filteredUser = {
-            name : player.displayName,
-            profile : player.image.url
-        }
-        const leftIdx = this.queue.indexOf(filteredUser);
-        if(leftIdx > -1) throw `${filteredUser} is already left the game`;
-        
+        // let filteredUser = {
+        //     name : player.displayName,
+        //     profile : player.profileImage
+        // }
+        const leftIdx = this.queue.indexOf(player);
+        if(leftIdx > -1) throw `${player} is already left the game`;
         let copied = [].concat(this.queue);
         copied.splice(leftIdx, 1); // 끊어냄 
         this.queue = copied;

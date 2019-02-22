@@ -9,6 +9,33 @@
                     align-items: center;
                     margin: 30px;
                 }
+
+                .user-list {
+                    padding: 10px 20px;
+                }
+
+                .user-profile {
+                    align-content: center;
+                    width: 200px;
+                }
+
+                .user-profile .rounded-circle {
+                    width: 75px; 
+                    border-radius: 50%; 
+                }
+                .user-profile .user-info p{
+                    padding: 0 15px; font-size:11px;
+                }
+                .user-profile .user-info h4 {
+                    color: #6b456a; 
+                    font-size: 14px; 
+                    font-weight: 600; 
+                    margin-bottom: 0; 
+                    padding-left: 14px; 
+                    margin-top:12px;
+                }
+                /* .btn-default{background:#6B456A; color:#fff; border-radius:30px; border:none; font-size:16px;} */
+
             </style>
         </head>
         <body>
@@ -100,12 +127,31 @@
 
         </div>
 
+        <!-- Add User list display -->
+        <div class='user-list' id='user-list'>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <div class="user-profile">
+                        <div class="align-self-center">
+                            <img class="rounded-circle" src="https://randomuser.me/api/portraits/women/67.jpg">
+                        </div>
+                        <div class="user-info">
+                            <h4>Deann Payne</h4>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation</p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
         <!-- Add Messages from the socket -->
         <div class='reactions'>
             <div id='socket-resp'>
 
             </div>
         </div>
+
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
@@ -155,6 +201,30 @@
                 return res;
             }
 
+            function updateUserList (userList) {
+                let userListTemplate = [];
+                console.log('updateUserList', userList);
+                userList.forEach((user) => {
+                    let singleTemplate = `<ul class="list-inline">
+                        <li class="list-inline-item">
+                            <div class="user-profile">
+                                <div class="align-self-center">
+                                    <img class="rounded-circle" src="${user.profileImage}">
+                                </div>
+                                <div class="user-info">
+                                    <h4>${user.name}</h4>
+                                    <p>${user.status || 'none'}</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>`;
+                    console.log('singleTemplate === > ', singleTemplate);
+                    userListTemplate.push(singleTemplate);
+                });
+                console.log('userListTemplate ', userListTemplate);
+                document.querySelector('#user-list').innerHTML = userListTemplate.join('');
+            } 
+
             async function login () {
                 try {
                     console.log('Login triggered ... ');
@@ -187,6 +257,11 @@
                     const gameId = res.game.gameId;
                     document.querySelector('#primeGameId').value = gameId;
                     appendFeeds(`API [ /game/create ] game Info : ${ JSON.stringify(res) }`);
+
+                    // 사용자 업데이트 
+                    let userList = (res.game || {}).queue || [];
+
+                    updateUserList(userList);
                     listen();
                     socketInstance.emit('create',{ 
                         room : gameId 
@@ -208,6 +283,11 @@
                     }
                     let res = await commonAjax('post', '/api/game/join', { gameId : joinGameId});
                     appendFeeds(`API [ /game/join ] results : ${ JSON.stringify(res) }`);
+
+                    // 사용자 업데이트 
+                    let userList = (res.game || {}).queue || [];
+                    updateUserList(userList);
+
                     if(!socketInstance) listen();   // 본인이 생성하고 입장한 경우에는 소켓 연결 필요없음 
                     socketInstance.emit('join',{ room : joinGameId });
                 } catch (exception) {
