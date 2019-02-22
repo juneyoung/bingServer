@@ -165,6 +165,11 @@
                     console.log('client Event message triggered', data);
                     appendFeeds(data);
                 });
+
+
+                socketInstance.on('gameData', (data) => {
+                    // 사용자 및 게임 판을 업데이트함 
+                })
                 console.log(`${new Date()} - Ready Socket listener`);
             }
 

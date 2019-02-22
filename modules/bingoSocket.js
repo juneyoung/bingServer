@@ -1,6 +1,11 @@
 const socketIO = require('socket.io');
 let GlobalVars = require('../state/GlobalVars');
-
+/*
+    이벤트 정의
+    message - 시스템 메세지
+    chat - 게임 내 채팅 메세지
+    gameData - 게임(숫자 커밋, 사용자의 변경) 관련 데이터 전송 
+*/
 module.exports = (httpServer) => {
 	let socketIOInstance = socketIO(httpServer);
     socketIOInstance.on('connection', (socket) => {
