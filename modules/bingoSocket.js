@@ -40,6 +40,12 @@ module.exports = (httpServer) => {
             socketIOInstance.emit('message', message);
         });
 
+        // client 에서 API 를 호출하고 그 결과를 파라미터로 보냄 
+        socket.on('gameData', (data) => {
+            console.log('game data has changed');
+            socketIOInstance.emit('gameData', data);
+        })
+
         socket.on('disconnect', (data) => {
             //
         });

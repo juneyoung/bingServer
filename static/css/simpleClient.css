@@ -1,0 +1,39 @@
+.reactions {
+    align-items: center;
+    margin: 30px;
+}
+
+.user-list {
+    padding: 10px 20px;
+}
+
+.user-profile {
+    align-content: center;
+    width: 200px;
+}
+
+.user-profile {
+    align-content: center;
+    width: 200px;
+}
+
+.user-profile .rounded-circle {
+    width: 75px; 
+    border-radius: 50%; 
+}
+
+.user-profile .user-info, .image-holder {
+    float: left;
+}
+
+.user-profile .user-info p{
+    padding: 0 15px; font-size:11px;
+}
+.user-profile .user-info h4 {
+    color: #6b456a; 
+    font-size: 14px; 
+    font-weight: 600; 
+    margin-bottom: 0; 
+    padding-left: 14px; 
+    margin-top:12px;
+}

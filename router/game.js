@@ -53,7 +53,6 @@ router.post('/create', (req, res) => {
     console.log(`CREATE GAME ====> ${JSON.stringify(user)}`);
     let player = new Player(req.session.id, user.displayName, user.image.url);
     console.log('Game before join', game, player);
-    // game.join(user);
     game.join(player);
     console.log('Game after join', game, player);
   } catch (e) {
@@ -78,6 +77,10 @@ router.post('/join', (req, res) => {
     console.log('Rooms which registered in global', GlobalVars.games);
     game = GlobalVars.games[toJoin];
     if(!game) throw `Invalid gameId : ${toJoin}`;
+    let user = req.session.user;
+    let player = new Player(req.session.id, user.displayName, user.image.url);
+    game.join(player);
+    console.log('Game a player has joined', game);
     message = `Successfully joined the game ${toJoin}`
   } catch (exception) {
     console.error(exception);
