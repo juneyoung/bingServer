@@ -2,6 +2,9 @@
 &nbsp;
 [ONLINE DEMO(Heroku)](https://bingo2019.herokuapp.com/) 
 
+### -01. Participants
+- KSY
+
 ### 00. Preparations for the project
 Do process with:
 - node.js
