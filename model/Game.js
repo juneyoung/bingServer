@@ -26,10 +26,6 @@ module.exports = class Game {
 
     leave (player) {
         console.log('Left user', player);
-        // let filteredUser = {
-        //     name : player.displayName,
-        //     profile : player.profileImage
-        // }
         const leftIdx = this.queue.indexOf(player);
         if(leftIdx > -1) throw `${player} is already left the game`;
         let copied = [].concat(this.queue);
@@ -38,7 +34,21 @@ module.exports = class Game {
         console.log('Players who left the game is ', this.queue);
     }
 
-    commit (number) {
+    commit (userId, number) {
+        number = number*1;
+        if(this.turn > 0) {
+            // [s] 해당 사용자가 n 번째 사용자가 맞는지 확인하는 로직
+            let userIdList = this.queue.map(user => { return user.sessionId });
+            let reqUserOrder = userIdList.indexOf(userId);
+            console.log(`check turns nthUser ${ reqUserOrder*1 }, gameTurns ${ this.turn }, count of users ${this.queue.length}, calc ${ this.turn % this.queue.length } `)
+            if(reqUserOrder !== (this.turn % this.queue.length)) throw 'It is not your turn. please, wait';
+            // [e] 해당 사용자가 n 번째 사용자가 맞는지 확인하는 로직
+
+            // [s] 전달된 숫자가 존재하는지 확인하는 로직
+            // 0 이나 음수의 확인을 위해서라면 number 배열보다 string 배열이 나을지도...
+            if(this.committed.indexOf(number) > -1) throw `${number} is already committed by other player.`;
+            // [e] 전달된 숫자가 존재하는지 확인하는 로직
+        }
         if(number < this.minNum) throw `${number} is lower than MINIMUM value ${this.minNum}`;
         if(number > this.maxNum) throw `${number} is lower than MINIMUM value ${this.maxNum}`;
         if(this.committed.indexOf(number) > -1) throw `A duplicated number. ${number} is already committed`;

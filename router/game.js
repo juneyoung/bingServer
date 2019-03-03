@@ -16,10 +16,17 @@ router.use((req, res, next) => {
   }
 });
 
+// 참가자들의 status 가 모두 ready 인지 확인하고 
+// 아니라면 에러, 맞다면 game 의 status 를 playing 으로 변경한다 
+router.all('/start', (req, res) => {
+
+});
+
+
 router.post('/commit', (req, res) => {
   // Room validation / Number validation
   console.log('commit Api called body', req.body);
-  console.log('commit Api called session', req.session);
+  console.log('commit Api called session', req.session, ', req session id is', req.session.id);
   let result = 'SUCCESS', message = '';
   let gameId = req.body.gameId;
   let number = req.body.number;
@@ -27,7 +34,10 @@ router.post('/commit', (req, res) => {
   try {
     game = GlobalVars.games[gameId];
     if(!game) throw `Could not commit the number ${number} since gameId ${gameId} is invalid`;
-    game.commit(number);
+
+    console.log('Before Commit game Data ::: ', game);
+    game.commit(req.session.id, number);
+    console.log('After Commit game Data ::: ', game);
   } catch(exception) {
     console.error('Exception occurs while commit a number', exception);
     result = 'FAIL';

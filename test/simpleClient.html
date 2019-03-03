@@ -132,8 +132,14 @@
                 console.log(`${new Date()} - Ready Socket listener`);
             }
 
-            function appendFeeds (message, style) {
+            // style, 
+            function appendFeeds (message, level) {
                 let feed = document.createElement('p');
+                if(level === 'error') {
+                    feed.style.color = 'red';
+                } else if (level === 'info') {
+                    feed.style.color = 'green';
+                }
                 feed.innerHTML = `${new Date()} - ${message}`;
                 document.getElementById('socket-resp').appendChild(feed);
             }
@@ -219,7 +225,7 @@
                     console.log('create result would be ',  res);
                     const gameId = res.game.gameId;
                     document.querySelector('#primeGameId').value = gameId;
-                    appendFeeds(`API [ /game/create ] game Info : ${ JSON.stringify(res) }`);
+                    appendFeeds(`API [ /game/create ] game Info : ${ JSON.stringify(res) }`, 'info');
                     listen();
                     socketInstance.emit('create',{ 
                         room : gameId 
@@ -241,7 +247,7 @@
                         return false;
                     }
                     let res = await commonAjax('post', '/api/game/join', { gameId : joinGameId});
-                    appendFeeds(`API [ /game/join ] results : ${ JSON.stringify(res) }`);
+                    appendFeeds(`API [ /game/join ] results : ${ JSON.stringify(res) }`, 'info');
                     if(!socketInstance) listen();   // 본인이 생성하고 입장한 경우에는 소켓 연결 필요없음 
                     socketInstance.emit('join',{ room : joinGameId });
                     socketInstance.emit('gameData',res.game);
@@ -276,11 +282,12 @@
                             gameId : joinGameId,
                             number : number 
                         });
-                    appendFeeds(`API [ /game/commit ] results : ${ JSON.stringify(res) }`);
+                    appendFeeds(`API [ /game/commit ] results : ${ JSON.stringify(res) }`, 'info');
                     socketInstance.emit('commit',{ room : joinGameId , number : number });    
                 } catch(exception) {
                     console.error('Exception', exception);
-                    alert(`Failed to commit a number ${number}`);
+                    // alert(`Failed to commit a number ${number}`);
+                    appendFeeds(`Failed to commit a number ${number}. ${exception}`, 'error')
                 }
             }
 
